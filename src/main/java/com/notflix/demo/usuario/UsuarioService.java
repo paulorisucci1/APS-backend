@@ -38,9 +38,7 @@ public class UsuarioService {
 
     public void deleteUser(Long id) {
 
-        final var foundUsuario = findById(id);
-
-        this.usuarioRepository.delete(foundUsuario);
+        this.usuarioRepository.deleteById(id);
     }
 
 }

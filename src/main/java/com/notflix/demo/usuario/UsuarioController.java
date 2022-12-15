@@ -8,7 +8,7 @@ import java.util.List;
 import static com.notflix.demo.usuario.UsuarioController.PATH_USUARIOS;
 
 @RestController
-@RequestMapping(value = PATH_USUARIOS)
+@RequestMapping(PATH_USUARIOS)
 public class UsuarioController {
 
     static final String PATH_USUARIOS = "/api/usuarios";

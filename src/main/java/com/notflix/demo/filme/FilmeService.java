@@ -36,7 +36,7 @@ public class FilmeService {
         return filmeRepository.save(foundFilme);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteFilme(Long id) {
 
         final var foundFilme = findById(id);
 
