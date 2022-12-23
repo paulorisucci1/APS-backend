@@ -3,6 +3,8 @@ package com.notflix.demo.usuario;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.notflix.demo.filme.Filme;
+
 import java.util.List;
 
 import static com.notflix.demo.usuario.UsuarioController.PATH_USUARIOS;
@@ -19,7 +21,7 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Usuario> createUser(@RequestBody Usuario usuario) {
         return ResponseEntity.ok(this.usuarioService.create(usuario));
     }
@@ -43,5 +45,15 @@ public class UsuarioController {
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         this.usuarioService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/{id}/curtir")
+    public ResponseEntity<Usuario> curtirFilme(@PathVariable("id") Long id, @RequestBody Filme filme) {
+    	return ResponseEntity.ok(this.usuarioService.curtirFilme(id, filme));
+    }
+    
+    @DeleteMapping("/{id}/descurtir")
+    public ResponseEntity<Usuario> descurtirFilme(@PathVariable("id") Long id, @RequestBody Filme filme) {
+    	return ResponseEntity.ok(this.usuarioService.descurtirFilme(id, filme));
     }
 }

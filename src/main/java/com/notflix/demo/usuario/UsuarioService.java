@@ -1,6 +1,8 @@
 package com.notflix.demo.usuario;
 
 import com.notflix.demo.exceptions.EntityNotFoundException;
+import com.notflix.demo.filme.Filme;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +41,22 @@ public class UsuarioService {
     public void deleteUser(Long id) {
 
         this.usuarioRepository.deleteById(id);
+    }
+    
+    public Usuario curtirFilme(Long id, Filme filmeCurtido) {
+    	final var foundUsuario = findById(id);
+    	
+    	foundUsuario.curtirFilme(filmeCurtido);
+    	
+    	return foundUsuario;
+    }
+    
+    public Usuario descurtirFilme(Long id, Filme filmeDescurtido) {
+    	final var foundUsuario = findById(id);
+    	
+    	foundUsuario.descurtirFilme(filmeDescurtido);
+
+    	return foundUsuario;
     }
 
 }
