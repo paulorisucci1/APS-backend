@@ -1,7 +1,10 @@
 package com.notflix.demo.filme;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +13,9 @@ import java.util.List;
 import com.notflix.demo.usuario.Usuario;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "filme")
 @Getter
 public class Filme {
@@ -29,6 +35,9 @@ public class Filme {
     @Column(name = "duracao")
     private int duracao;
 
+    @Column(name = "url_imagem")
+    private String urlImagem;
+
     @Column(name = "data_lancamento")
     private LocalDate dataLancamento;
 
@@ -40,6 +49,7 @@ public class Filme {
         this.descricao = filme.getDescricao();
         this.duracao = filme.getDuracao();
         this.dataLancamento = filme.getDataLancamento();
+        this.urlImagem = filme.getUrlImagem();
     }
 
 	public LocalDate getDataLancamento() {
