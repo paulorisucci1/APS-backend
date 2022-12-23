@@ -87,17 +87,12 @@ public class FilmeServiceTest {
 
         final var originalFilm = Filme.builder()
                 .id(2L)
-                .titulo("O rei leão 2")
-                .dataLancamento(LocalDate.now())
-                .urlImagem("qualquerUrl2.png")
-                .descricao("Um leão Rei 2")
-                .duracao(112)
                 .build();
 
-        Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(this.film));
+        Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(originalFilm));
         Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(this.film);
 
-        final var updatedFilme = filmeService.updateFilme(this.film.getId(), originalFilm);
+        final var updatedFilme = filmeService.updateFilme(originalFilm.getId(), this.film);
 
         validateFilme(updatedFilme);
 
