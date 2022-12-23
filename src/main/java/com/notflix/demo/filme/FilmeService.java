@@ -38,9 +38,7 @@ public class FilmeService {
 
     public void deleteFilme(Long id) {
 
-        final var foundFilme = findById(id);
-
-        this.filmeRepository.delete(foundFilme);
+        this.filmeRepository.deleteById(id);
     }
 
 }
