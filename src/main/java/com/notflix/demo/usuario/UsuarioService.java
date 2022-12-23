@@ -1,9 +1,11 @@
 package com.notflix.demo.usuario;
 
 import com.notflix.demo.exceptions.EntityNotFoundException;
+import com.notflix.demo.exceptions.EntityAlreadyExistException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UsuarioService {
@@ -15,7 +17,16 @@ public class UsuarioService {
     }
 
     public Usuario create(Usuario usuario) {
+        verifyIfUsuariosEmailAlreadyExists(usuario);
         return this.usuarioRepository.save(usuario);
+    }
+
+    private void verifyIfUsuariosEmailAlreadyExists(Usuario usuario) {
+        final var foundUsuario = usuarioRepository.findByEmail(usuario.getEmail());
+
+        if(Objects.nonNull(foundUsuario) && !Objects.equals(foundUsuario.getId(), usuario.getId())) {
+            throw new EntityAlreadyExistException("Já existe um usuário cadastrado com o email informado");
+        }
     }
 
     public List<Usuario> list() {
@@ -30,8 +41,9 @@ public class UsuarioService {
     public Usuario updateUsuario(Long id, Usuario updatedUsuario) {
 
         final var foundUsuario = findById(id);
-
         foundUsuario.update(updatedUsuario);
+
+        verifyIfUsuariosEmailAlreadyExists(foundUsuario);
 
         return usuarioRepository.save(foundUsuario);
     }

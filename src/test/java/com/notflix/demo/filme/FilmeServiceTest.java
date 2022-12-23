@@ -1,5 +1,6 @@
 package com.notflix.demo.filme;
 
+import com.notflix.demo.exceptions.EntityAlreadyExistException;
 import com.notflix.demo.exceptions.EntityNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @RunWith(SpringRunner.class)
 public class FilmeServiceTest {
 
-    private Filme film;
+    private Filme filme;
 
     @InjectMocks
     private FilmeService filmeService;
@@ -29,7 +30,7 @@ public class FilmeServiceTest {
     @Before
     public void setup() {
 
-        this.film = Filme.builder()
+        this.filme = Filme.builder()
                 .id(1L)
                 .titulo("O rei leão")
                 .descricao("Um leão rei")
@@ -41,9 +42,9 @@ public class FilmeServiceTest {
     @Test
     public void shouldFindFilmById() {
 
-        Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(this.film));
+        Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(this.filme));
 
-        final var foundFilm = filmeService.findById(this.film.getId());
+        final var foundFilm = filmeService.findById(this.filme.getId());
 
         validateFilme(foundFilm);
     }
@@ -53,15 +54,15 @@ public class FilmeServiceTest {
 
         Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 
-        Assertions.assertThatThrownBy(() -> filmeService.findById(this.film.getId())).isInstanceOf(EntityNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> filmeService.findById(this.filme.getId())).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     public void shouldCreateFilmeSuccessfully() {
 
-        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(this.film);
+        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(this.filme);
 
-        Filme createdFilm = filmeService.create(this.film);
+        Filme createdFilm = filmeService.create(this.filme);
 
         validateFilme(createdFilm);
     }
@@ -69,7 +70,7 @@ public class FilmeServiceTest {
     @Test
     public void shouldListFilmesSuccessfully() {
 
-        Mockito.when(filmeRepository.findAll()).thenReturn(List.of(this.film));
+        Mockito.when(filmeRepository.findAll()).thenReturn(List.of(this.filme));
 
         List<Filme> filmeList = filmeService.list();
 
@@ -90,22 +91,41 @@ public class FilmeServiceTest {
                 .build();
 
         Mockito.when(filmeRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(originalFilm));
-        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(this.film);
+        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(this.filme);
 
-        final var updatedFilme = filmeService.updateFilme(originalFilm.getId(), this.film);
+        final var updatedFilme = filmeService.updateFilme(originalFilm.getId(), this.filme);
 
         validateFilme(updatedFilme);
 
     }
 
+    @Test
+    public void shouldVerifyIfFilmesTituloAlreadyExistsSuccessfully(){
+        Mockito.when(filmeRepository.findByTitulo(Mockito.anyString())).thenReturn(null);
+
+        Assertions.assertThatNoException().isThrownBy(() -> filmeService.verifyIfFilmesTituloAlreadyExists(this.filme));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFilmesTituloAlreadyExists(){
+        final var newFilme = Filme.builder()
+                        .titulo(filme.getTitulo())
+                        .build();
+
+        Mockito.when(filmeRepository.findByTitulo(Mockito.anyString())).thenReturn(this.filme);
+
+        Assertions.assertThatThrownBy(() -> filmeService.verifyIfFilmesTituloAlreadyExists(newFilme))
+                .isInstanceOf(EntityAlreadyExistException.class);
+    }
+
     private void validateFilme(Filme film) {
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(film.getId()).isEqualTo(this.film.getId());
-            softly.assertThat(film.getTitulo()).isEqualTo(this.film.getTitulo());
-            softly.assertThat(film.getDuracao()).isEqualTo(this.film.getDuracao());
-            softly.assertThat(film.getDescricao()).isEqualTo(this.film.getDescricao());
-            softly.assertThat(film.getUrlImagem()).isEqualTo(this.film.getUrlImagem());
-            softly.assertThat(film.getDataLancamento()).isEqualTo(this.film.getDataLancamento());
+            softly.assertThat(film.getId()).isEqualTo(this.filme.getId());
+            softly.assertThat(film.getTitulo()).isEqualTo(this.filme.getTitulo());
+            softly.assertThat(film.getDuracao()).isEqualTo(this.filme.getDuracao());
+            softly.assertThat(film.getDescricao()).isEqualTo(this.filme.getDescricao());
+            softly.assertThat(film.getUrlImagem()).isEqualTo(this.filme.getUrlImagem());
+            softly.assertThat(film.getDataLancamento()).isEqualTo(this.filme.getDataLancamento());
         });
 
     }
